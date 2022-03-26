@@ -51,7 +51,7 @@ def get_excise_lbt(data, lbt_tax_key, kata):
 
 
 def get_simplified_lbt(data, net_revenue, lbt_tax_key):
-    if net_revenue <= data['simplified_max_revenue']:
+    if 0 < net_revenue <= data['simplified_max_revenue']:
         return int(net_revenue * (1 - data['simplified_cost_share']) * lbt_tax_key)
     else:
         return 'Null'
@@ -73,3 +73,12 @@ def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, sub
                                    lbt_tax_key, kata)
 
     return list(lbt_opinions.keys())[list(lbt_opinions.values()).index(min(lbt_opinions.values()))]
+
+
+def get_lbt_tax_key(lbt_tax_percentage, current_year):
+    discount_year = [2021, 2022]
+    if current_year in discount_year:
+        if lbt_tax_percentage >= 1.0:
+            return 0.01
+    else:
+        return lbt_tax_percentage / 100
