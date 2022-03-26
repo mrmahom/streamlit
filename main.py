@@ -83,18 +83,19 @@ if lbt_city not in city.zero_tax:
 
         else:
             st.subheader("Egyetlen választási lehetőséged")
+            only_one_option = lbt_options.keys()
 
-            if lbt_options.keys() == 'excise':
-                excise = f'{lbt_options.values():,}'.replace(',', '.')
-                st.write(f'Tételes iparűzési adó: {lbt_options.values()} Ft')
+            for option in lbt_options:
+                lbt_option_value = f'{lbt_options[option]:,}'.replace(',', '.')
 
-            elif lbt_options.keys() == 'simplified':
-                simplified = f'{lbt_options.values():,}'.replace(',', '.')
-                st.write(f'Egyszerűsített adóalap-megállapítás: {lbt_options.values()}')
+                if option == 'excise':
+                    st.write(f'Tételes iparűzési adó: {lbt_option_value} Ft')
 
-            else:
-                normal = f'{lbt_options.values():,}'.replace(',', '.')
-                st.write(f'Normál iparűzési adó: {lbt_options.values()}')
+                elif option == 'simplified':
+                    st.write(f'Egyszerűsített adóalap-megállapítás: {lbt_option_value} Ft')
+
+                else:
+                    st.write(f'Normál iparűzési adó: {lbt_option_value} Ft')
 
     else:
         st.write('Túl kevés adatot adtál meg!')  # TODO kata=True esetén a tételest ki kellene írni? Hogyan?

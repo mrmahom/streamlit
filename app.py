@@ -42,7 +42,6 @@ def get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontr
     return normal_lbt if normal_lbt >= 0 else 0
 
 
-
 def get_excise_lbt(data, lbt_tax_key, kata):
     if kata:
         return int(float(data['excise_lbt_base']) * lbt_tax_key)
@@ -58,14 +57,14 @@ def get_simplified_lbt(data, net_revenue, lbt_tax_key):
 
 
 def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, lbt_tax_key, kata):
-    lbt_opinions = {}
+    lbt_options = {}
     if get_excise_lbt(data, lbt_tax_key, kata) != 'Null':
-        lbt_opinions['excise'] = get_excise_lbt(data, lbt_tax_key, kata)
+        lbt_options['excise'] = get_excise_lbt(data, lbt_tax_key, kata)
     if get_simplified_lbt(data, net_revenue, lbt_tax_key) != 'Null':
-        lbt_opinions['simplified'] = get_simplified_lbt(data, net_revenue, lbt_tax_key)
-    lbt_opinions['normal'] = get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
-                                            lbt_tax_key)
-    return lbt_opinions
+        lbt_options['simplified'] = get_simplified_lbt(data, net_revenue, lbt_tax_key)
+    lbt_options['normal'] = get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
+                                           lbt_tax_key)
+    return lbt_options
 
 
 def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, lbt_tax_key, kata):
