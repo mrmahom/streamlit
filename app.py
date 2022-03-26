@@ -1,78 +1,75 @@
-import tax_keys as lbt
 
-zero_tax_cities = lbt.zero_tax
-tax_by_city = lbt.tax_by_city
-
-test = {
-    'bev': 1000000,
-    'elabe': 0,
-    'kozv': 0,
-    'anyag': 0,
-    'alvall': 0,
-    'kulcs': .01,
-    'kata': True
-}
-
-main = {
-    'teteles_adoalap': 2500000,
-    'egysz_hanyad': .8,
-    'egysz_max': 8000000
+main_data = {
+    'excise_lbt_base': 2500000,
+    'simplified_cost_share': .2,
+    'simplified_max_revenue': 8000000
 }
 
 
-def m(szam):
-    return szam * 1000000
+def m(num):
+    return num * 1000000
 
 
-def eft(szam):
-    round(szam / 1000) * 1000
+def get_considerable(net_revenue, pvgs):
+    if pvgs <= m(500):
+        considerable_max = [pvgs, 0, 0, 0]
+        proportionate = [pvgs, 0, 0, 0]
 
+    elif m(500) < pvgs <= m(20000):
+        considerable_max = [m(500), (pvgs - m(500)) * 0.8, 0, 0]
+        proportionate = [m(500) / net_revenue * pvgs, m(19500) / net_revenue * pvgs, 0, 0]
 
-def aranyosito(arbev, elabe):
-    if elabe <= m(500):
-        maxx = [elabe, 0, 0, 0]
-        arany = [elabe, 0, 0, 0]
-    elif m(500) < elabe <= m(20000):
-        maxx = [m(500), (elabe - m(500)) * 0.8, 0, 0]
-        arany = [m(500) / arbev * elabe, m(19500) / arbev * elabe, 0, 0]
-    elif m(20000) < elabe <= m(80000):
-        maxx = [m(500), m(19500) * .80, (elabe - m(20000)) * .75, 0]
-        arany = [m(500) / arbev * elabe, m(19500) / arbev * elabe, m(60000) / arbev * elabe, 0]
+    elif m(20000) < pvgs <= m(80000):
+        considerable_max = [m(500), m(19500) * .80, (pvgs - m(20000)) * .75, 0]
+        proportionate = [m(500) / net_revenue * pvgs, m(19500) / net_revenue * pvgs, m(60000) / net_revenue * pvgs, 0]
+
     else:
-        maxx = [m(500), m(19500) * .80, m(60000) * .75, (elabe - m(80000)) * .70]
-        arany = [m(500) / arbev * elabe, m(19500) / arbev * elabe, m(60000) / arbev * elabe,
-                 (arbev - m(80000)) / arbev * elabe]
-    return sum([min(maxx[0], arany[0]), min(maxx[1], arany[1]),
-               min(maxx[2], arany[2]), min(maxx[3], arany[3])])
+        considerable_max = [m(500), m(19500) * .80, m(60000) * .75, (pvgs - m(80000)) * .70]
+        proportionate = [m(500) / net_revenue * pvgs, m(19500) / net_revenue * pvgs, m(60000) / net_revenue * pvgs,
+                         (net_revenue - m(80000)) / net_revenue * pvgs]
+
+    return sum([min(considerable_max[0], proportionate[0]), min(considerable_max[1], proportionate[1]),
+               min(considerable_max[2], proportionate[2]), min(considerable_max[3], proportionate[3])])
 
 
-def adoalap(dic):
-    return dic['bev'] - dic['anyag'] - aranyosito(dic['bev'], (dic['elabe'] + dic['kozv'])) - dic['alvall']
+def normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting):
+    return net_revenue - material_cost - get_considerable(net_revenue, pvgs + intermed_services) - subcontracting
 
 
-def ado(dic):
-    return int(adoalap(dic) * dic['kulcs'])
+def get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, lbt_tax_key):
+    normal_lbt = int(normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting) *
+                     lbt_tax_key)
+    return normal_lbt if normal_lbt >= 0 else 0
 
 
-def teteles(dic, dic2):
-    return int(dic2['teteles_adoalap'] * dic['kulcs']) if dic['kata'] else 0
+
+def get_excise_lbt(data, lbt_tax_key, kata):
+    if kata:
+        return int(float(data['excise_lbt_base']) * lbt_tax_key)
+    else:
+        return 'Null'
 
 
-def egyszeru(dic, dic2):
-    return int(dic['bev'] * dic2['egysz_hanyad'] * dic['kulcs']) if dic['bev'] <= dic2['egysz_max'] else 0
+def get_simplified_lbt(data, net_revenue, lbt_tax_key):
+    if net_revenue <= data['simplified_max_revenue']:
+        return int(net_revenue * (1 - data['simplified_cost_share']) * lbt_tax_key)
+    else:
+        return 'Null'
 
 
-def megeri(dic, dic2, dic3):
-    if teteles(dic, dic2):
-        dic3['teteles'] = teteles(dic, dic2)
-    if egyszeru(dic, dic2):
-        dic3['egyszeru'] = egyszeru(dic, dic2)
-    if ado(dic):
-        dic3['normal'] = ado(dic)
-    return list(dic3.keys())[list(dic3.values()).index(min(dic3.values()))]
+def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, lbt_tax_key, kata):
+    lbt_opinions = {}
+    if get_excise_lbt(data, lbt_tax_key, kata) != 'Null':
+        lbt_opinions['excise'] = get_excise_lbt(data, lbt_tax_key, kata)
+    if get_simplified_lbt(data, net_revenue, lbt_tax_key) != 'Null':
+        lbt_opinions['simplified'] = get_simplified_lbt(data, net_revenue, lbt_tax_key)
+    lbt_opinions['normal'] = get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
+                                            lbt_tax_key)
+    return lbt_opinions
 
 
-valasztas = {}
-print(valasztas)
-print(megeri(test, main, valasztas))
-print(valasztas)
+def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, lbt_tax_key, kata):
+    lbt_opinions = get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data,
+                                   lbt_tax_key, kata)
+
+    return list(lbt_opinions.keys())[list(lbt_opinions.values()).index(min(lbt_opinions.values()))]

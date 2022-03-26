@@ -1,5 +1,4 @@
-from typing import Dict, Union, Any
-
+# tax_key = 0.0
 zero_tax = [
     'Abaújalpár', 'Abaújlak', 'Acsád', 'Adorjánháza', 'Adorjás', 'Aggtelek', 'Almamellék', 'Almásháza',
     'Almáskeresztúr', 'Andrásfa', 'Annavölgy', 'Apácatorna', 'Aranyosgadány', 'Bakháza', 'Bakonyság', 'Balajt',
@@ -34,6 +33,7 @@ zero_tax = [
     'Óbudavár', 'Ózdfalu', 'Újlengyel', 'Újlőrincfalva', 'Újsolt', 'Őr'
 ]
 
+# All cities and taxes
 tax_by_city = {
     'Pálfiszeg': '2.0', 'Tiszanána': '1.0', 'Milejszeg': '2.0', 'Csonkahegyhát': '2.0', 'Semjénháza': '0.0',
     'Komlódtótfalu': '2.0', 'Bodmér': '0.4', 'Sárkeresztúr': '2.0', 'Nagyhalász': '1.5', 'Égerszög': '0.5',
