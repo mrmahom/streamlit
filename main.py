@@ -22,7 +22,8 @@ if lbt_city not in city.zero_tax:
     colRevenue, colKata = st.columns(2)
 
     with colRevenue:
-        net_revenue = st.number_input("Add meg az éves bevételed!", min_value=0, step=100000)
+        net_revenue = st.number_input("Add meg az éves bevételed!", min_value=0, step=100000,
+                                      format="{:,}".replace(",", "."))
 
     with colKata:
         kata = st.checkbox('A kisadózó vállalkozások tételes adója alá tartozol?')
