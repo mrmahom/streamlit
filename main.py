@@ -25,8 +25,7 @@ if lbt_city not in city.zero_tax:
         net_revenue = st.number_input("Add meg az éves bevételed!", min_value=0, step=100000)
 
     with colKata:
-        str_kata = st.checkbox('A kisadózó vállalkozások tételes adója alá tartozol?', ('Igen', 'Nem'))
-        kata = True if str_kata == 'Igen' else False
+        kata = st.checkbox('A kisadózó vállalkozások tételes adója alá tartozol?')
 
     st.markdown("---")
 
