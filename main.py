@@ -5,10 +5,10 @@ import streamlit as st
 from lbt import lbt_accounts
 import app
 
-current_year = 2022  # TODO implementálni kellene a formra is
+current_year = 2022
 net_revenue, material_cost, pvgs, intermed_services, subcontracting = 0, 0, 0, 0, 0
 
-st.set_page_config(page_title="Iparűzési adó kalkulátor")
+st.set_page_config(page_title="Iparűzési adó kalkulátor", page_icon="🧊")
 
 st.title("Iparűzési adó kalkulátor")
 
@@ -29,7 +29,7 @@ if lbt_city != 'Válassz!':
                                           format="%d".replace(",", "."))
 
         with colKata:
-            kata = st.checkbox("A kisadózó vállalkozások tételes adója alá tartozol?")
+            kata = st.checkbox("A kata adó hatája alá tartozol?")
             acc_costs = st.checkbox("Vannak elszámolható költségeid?")
 
         if acc_costs:
@@ -42,8 +42,10 @@ if lbt_city != 'Válassz!':
                 pvgs = st.number_input("Add meg az eladott áruid beszerzési értékét!", min_value=0, step=100000)
 
             with colExpenses2:
-                intermed_services = st.number_input("Add meg a közvetített szolgáltatások értékét!", min_value=0, step=100000)
-                subcontracting = st.number_input("Add meg az alvállalkozóid teljesítések értékét!", min_value=0, step=100000)
+                intermed_services = st.number_input("Add meg a közvetített szolgáltatások értékét!",
+                                                    min_value=0, step=100000)
+                subcontracting = st.number_input("Add meg az alvállalkozóid teljesítések értékét!", min_value=0,
+                                                 step=100000)
 
         st.markdown("---")
 
@@ -51,8 +53,8 @@ if lbt_city != 'Válassz!':
             main_data = app.main_data
             lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
                                               main_data, lbt_tax_key, kata)
-            recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
-                                                     main_data, lbt_tax_key, kata)
+            recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services,
+                                                     subcontracting, main_data, lbt_tax_key, kata)
 
             if len(lbt_options) > 1:
                 st.subheader("Lehetőségeid")
@@ -99,11 +101,7 @@ if lbt_city != 'Válassz!':
                         st.write(f"Normál iparűzési adó: {lbt_option_value} Ft")
 
         else:
-            st.write("Túl kevés adatot adtál meg!")  # TODO kata=True esetén a tételest ki kellene írni? Hogyan?
+            st.write("Túl kevés adatot adtál meg!")
 
     else:
         st.write("A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!")
-
-st.markdown("---")
-st.write("A kalkulátor jelenleg nem számol adókedvezménnyel, vagy mentességgel!")
-
