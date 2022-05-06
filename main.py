@@ -13,7 +13,7 @@ st.set_page_config(page_title="Iparűzési adó kalkulátor")
 
 st.title("Iparűzési adó kalkulátor")
 
-lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + sorted(lbt_accounts)))
+lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + list(lbt_accounts.keys())))
 
 if lbt_city != 'Válassz!':
     lbt_tax_percentage = float(list(city.tax_by_city.values())[list(city.tax_by_city.keys()).index(lbt_city)])
