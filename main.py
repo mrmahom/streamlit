@@ -18,92 +18,92 @@ if lbt_city != 'Válassz!':
     st.write(f'A településen érvényes adókulcs: {lbt_tax_percentage:,}%'.replace('.', ','))
     lbt_tax_key = app.get_tax_key(lbt_tax_percentage, current_year)
 
-if lbt_city not in city.zero_tax:
-    st.subheader("**Alap adatok**")
+    if lbt_city not in city.zero_tax:
+        st.subheader("**Alap adatok**")
 
-    colRevenue, colKata = st.columns(2)
+        colRevenue, colKata = st.columns(2)
 
-    with colRevenue:
-        net_revenue = st.number_input("Add meg az éves bevételed!", min_value=0, step=100000,
-                                      format="%d".replace(",", "."))
+        with colRevenue:
+            net_revenue = st.number_input("Add meg az éves bevételed!", min_value=0, step=100000,
+                                          format="%d".replace(",", "."))
 
-    with colKata:
-        kata = st.checkbox('A kisadózó vállalkozások tételes adója alá tartozol?')
+        with colKata:
+            kata = st.checkbox('A kisadózó vállalkozások tételes adója alá tartozol?')
 
-    st.markdown("---")
+        st.markdown("---")
 
-    st.subheader("**Elszámolható költségek**")
+        st.subheader("**Elszámolható költségek**")
 
-    colExpenses1, colExpenses2 = st.columns(2)
+        colExpenses1, colExpenses2 = st.columns(2)
 
-    with colExpenses1:
-        material_cost = st.number_input("Add meg az anyagköltséged értékét!", min_value=0, step=100000)
+        with colExpenses1:
+            material_cost = st.number_input("Add meg az anyagköltséged értékét!", min_value=0, step=100000)
 
-        pvgs = st.number_input("Add meg az eladott áruid beszerzési értékét!", min_value=0, step=100000)
+            pvgs = st.number_input("Add meg az eladott áruid beszerzési értékét!", min_value=0, step=100000)
 
-    with colExpenses2:
-        intermed_services = st.number_input("Add meg a közvetített szolgáltatások értékét!", min_value=0, step=100000)
+        with colExpenses2:
+            intermed_services = st.number_input("Add meg a közvetített szolgáltatások értékét!", min_value=0, step=100000)
 
-        subcontracting = st.number_input("Add meg az alvállalkozóid teljesítések értékét!", min_value=0, step=100000)
+            subcontracting = st.number_input("Add meg az alvállalkozóid teljesítések értékét!", min_value=0, step=100000)
 
-    st.markdown("---")
+        st.markdown("---")
 
-    if net_revenue and lbt_tax_key:
-        main_data = app.main_data
-        lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
-                                          main_data, lbt_tax_key, kata)
-        recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
-                                                 main_data, lbt_tax_key, kata)
+        if net_revenue and lbt_tax_key:
+            main_data = app.main_data
+            lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
+                                              main_data, lbt_tax_key, kata)
+            recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
+                                                     main_data, lbt_tax_key, kata)
 
-        if len(lbt_options) > 1:
-            st.subheader("Lehetőségeid")
+            if len(lbt_options) > 1:
+                st.subheader("Lehetőségeid")
 
-            for option in lbt_options:
+                for option in lbt_options:
 
-                if option == 'excise':
-                    excise = f'{lbt_options[option]:,}'.replace(',', '.')
-                    st.write(f'Tételes iparűzési adó: {excise} Ft')
+                    if option == 'excise':
+                        excise = f'{lbt_options[option]:,}'.replace(',', '.')
+                        st.write(f'Tételes iparűzési adó: {excise} Ft')
 
-                elif option == 'simplified':
-                    simplified = f'{lbt_options[option]:,}'.replace(',', '.')
-                    st.write(f'Egyszerűsített adóalap-megállapítás: {simplified} Ft')
+                    elif option == 'simplified':
+                        simplified = f'{lbt_options[option]:,}'.replace(',', '.')
+                        st.write(f'Egyszerűsített adóalap-megállapítás: {simplified} Ft')
+
+                    else:
+                        normal = f'{lbt_options[option]:,}'.replace(',', '.')
+                        st.write(f'Normál iparűzési adó: {normal} Ft')
+
+                st.subheader("Az általunk ajánlott iparűzési adótípus")
+
+                if recommendation == 'excise':
+                    st.write('Tételes iparűzési adó')
+
+                elif recommendation == 'simplified':
+                    st.write('Egyszerűsített adóalap-megállapítás')
 
                 else:
-                    normal = f'{lbt_options[option]:,}'.replace(',', '.')
-                    st.write(f'Normál iparűzési adó: {normal} Ft')
-
-            st.subheader("Az általunk ajánlott iparűzési adótípus")
-
-            if recommendation == 'excise':
-                st.write('Tételes iparűzési adó')
-
-            elif recommendation == 'simplified':
-                st.write('Egyszerűsített adóalap-megállapítás')
+                    st.write('Normál iparűzési adó')
 
             else:
-                st.write('Normál iparűzési adó')
+                st.subheader("Egyetlen választási lehetőséged")
+                only_one_option = lbt_options.keys()
+
+                for option in lbt_options:
+                    lbt_option_value = f'{lbt_options[option]:,}'.replace(',', '.')
+
+                    if option == 'excise':
+                        st.write(f'Tételes iparűzési adó: {lbt_option_value} Ft')
+
+                    elif option == 'simplified':
+                        st.write(f'Egyszerűsített adóalap-megállapítás: {lbt_option_value} Ft')
+
+                    else:
+                        st.write(f'Normál iparűzési adó: {lbt_option_value} Ft')
 
         else:
-            st.subheader("Egyetlen választási lehetőséged")
-            only_one_option = lbt_options.keys()
-
-            for option in lbt_options:
-                lbt_option_value = f'{lbt_options[option]:,}'.replace(',', '.')
-
-                if option == 'excise':
-                    st.write(f'Tételes iparűzési adó: {lbt_option_value} Ft')
-
-                elif option == 'simplified':
-                    st.write(f'Egyszerűsített adóalap-megállapítás: {lbt_option_value} Ft')
-
-                else:
-                    st.write(f'Normál iparűzési adó: {lbt_option_value} Ft')
+            st.write('Túl kevés adatot adtál meg!')  # TODO kata=True esetén a tételest ki kellene írni? Hogyan?
 
     else:
-        st.write('Túl kevés adatot adtál meg!')  # TODO kata=True esetén a tételest ki kellene írni? Hogyan?
-
-else:
-    st.write('A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!')
+        st.write('A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!')
 
 st.markdown("---")
 st.write('A kalkulátor jelenleg nem számol adókedvezménnyel, vagy mentességgel!')
