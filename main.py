@@ -2,7 +2,6 @@
 # @author: E. Martin Maho
 
 import streamlit as st
-import tax_keys as city
 from lbt import lbt_accounts
 import app
 
@@ -16,11 +15,11 @@ st.title("Iparűzési adó kalkulátor")
 lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + list(lbt_accounts.keys())))
 
 if lbt_city != 'Válassz!':
-    lbt_tax_percentage = float(list(city.tax_by_city.values())[list(city.tax_by_city.keys()).index(lbt_city)])
+    lbt_tax_percentage = lbt_accounts[lbt_city]['rate']
     st.write(f"A településen érvényes adókulcs: {lbt_tax_percentage:,}%".replace('.', ','))
     lbt_tax_key = app.get_tax_key(lbt_tax_percentage, current_year)
 
-    if lbt_city not in city.zero_tax:
+    if app.has_lbt_tax_key(lbt_city):
         st.subheader("**Alap adatok**")
 
         colRevenue, colKata = st.columns(2)

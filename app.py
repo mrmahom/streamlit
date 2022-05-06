@@ -105,8 +105,3 @@ def get_lbt_tax_key(city_name):
 def has_lbt_tax_key(city_name):
     lbt_data = lbt[city_name]
     return True if lbt_data['rate'] else False
-
-
-"""
-
-"""
