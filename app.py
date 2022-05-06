@@ -104,7 +104,7 @@ def get_exemption_limit(city_name):
 
 def get_lbt_tax_key(city_name):
     lbt_data = lbt[city_name]
-    return lbt_data['rate']
+    return get_tax_key(lbt_data['rate'], 2022)
 
 
 def has_lbt_tax_key(city_name):
