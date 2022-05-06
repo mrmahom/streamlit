@@ -11,10 +11,12 @@ st.set_page_config(page_title="Iparűzési adó kalkulátor")
 
 st.title("Iparűzési adó kalkulátor")
 
-lbt_city = st.selectbox('Válaszd ki a székhelyed szerinti települést!', (sorted(city.tax_by_city)))
-lbt_tax_percentage = float(list(city.tax_by_city.values())[list(city.tax_by_city.keys()).index(lbt_city)])
-st.write(f'A településen érvényes adókulcs: {lbt_tax_percentage:,}%'.replace('.', ','))
-lbt_tax_key = app.get_tax_key(lbt_tax_percentage, current_year)
+lbt_city = st.selectbox('Válaszd ki a székhelyed szerinti települést!', (['Válassz!'] + sorted(city.tax_by_city)))
+
+if lbt_city != 'Válassz!':
+    lbt_tax_percentage = float(list(city.tax_by_city.values())[list(city.tax_by_city.keys()).index(lbt_city)])
+    st.write(f'A településen érvényes adókulcs: {lbt_tax_percentage:,}%'.replace('.', ','))
+    lbt_tax_key = app.get_tax_key(lbt_tax_percentage, current_year)
 
 if lbt_city not in city.zero_tax:
     st.subheader("**Alap adatok**")
