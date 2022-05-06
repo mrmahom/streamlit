@@ -6,6 +6,7 @@ import tax_keys as city
 import app
 
 current_year = 2022  # TODO implementálni kellene a formra is
+net_revenue, material_cost, pvgs, intermed_services, subcontracting = 0, 0, 0, 0, 0
 
 st.set_page_config(page_title="Iparűzési adó kalkulátor")
 
