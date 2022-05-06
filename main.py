@@ -76,13 +76,13 @@ if lbt_city != 'Válassz!':
                 st.subheader("Az általunk ajánlott iparűzési adótípus")
 
                 if recommendation == 'excise':
-                    st.write("Tételes iparűzési adó")
+                    st.success("Tételes iparűzési adó")
 
                 elif recommendation == 'simplified':
-                    st.write("Egyszerűsített adóalap-megállapítás")
+                    st.success("Egyszerűsített adóalap-megállapítás")
 
                 else:
-                    st.write("Normál iparűzési adó")
+                    st.success("Normál iparűzési adó")
 
             else:
                 st.subheader("Egyetlen \"választási\" lehetőséged")
@@ -101,10 +101,10 @@ if lbt_city != 'Válassz!':
                         st.write(f"Normál iparűzési adó: {lbt_option_value} Ft")
 
         else:
-            st.write("Túl kevés adatot adtál meg!")
+            st.warning("Túl kevés adatot adtál meg!")
 
     else:
-        st.write("A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!")
+        st.success("A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!")
 
 st.markdown("---")
 st.info("A kalkulátor jelenleg nem számol adókedvezménnyel, vagy -mentességgel.")
