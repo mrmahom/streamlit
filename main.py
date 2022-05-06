@@ -3,6 +3,7 @@
 
 import streamlit as st
 import tax_keys as city
+from lbt import lbt_accounts
 import app
 
 current_year = 2022  # TODO implementálni kellene a formra is
@@ -12,7 +13,7 @@ st.set_page_config(page_title="Iparűzési adó kalkulátor")
 
 st.title("Iparűzési adó kalkulátor")
 
-lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + sorted(city.tax_by_city)))
+lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + sorted(lbt_accounts)))
 
 if lbt_city != 'Válassz!':
     lbt_tax_percentage = float(list(city.tax_by_city.values())[list(city.tax_by_city.keys()).index(lbt_city)])
