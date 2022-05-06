@@ -25,7 +25,7 @@ if lbt_city != 'Válassz!':
         colRevenue, colKata = st.columns(2)
 
         with colRevenue:
-            net_revenue = st.number_input("Add meg az éves bevételed!", min_value=0, step=100000,
+            net_revenue = st.number_input("Add meg az éves bevételed!", min_value=100000, step=100000,
                                           format="%d".replace(",", "."))
 
         with colKata:
