@@ -104,3 +104,4 @@ else:
 
 st.markdown("---")
 st.write('A kalkulátor jelenleg nem számol adókedvezménnyel, vagy mentességgel!')
+
