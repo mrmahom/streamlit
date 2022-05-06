@@ -11,7 +11,7 @@ def m(num):
     return num * 1000000
 
 
-def get_considerable(net_revenue, pvgs):
+def get_considerable(net_revenue, pvgs=0):
     if pvgs <= m(500):
         considerable_max = [pvgs, 0, 0, 0]
         proportionate = [pvgs, 0, 0, 0]
@@ -33,11 +33,11 @@ def get_considerable(net_revenue, pvgs):
                min(considerable_max[2], proportionate[2]), min(considerable_max[3], proportionate[3])])
 
 
-def get_normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting):
+def get_normal_lbt_tax_base(net_revenue, material_cost=0, pvgs=0, intermed_services=0, subcontracting=0):
     return net_revenue - material_cost - get_considerable(net_revenue, pvgs + intermed_services) - subcontracting
 
 
-def get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, lbt_tax_key):
+def get_normal_lbt(net_revenue, material_cost=0, pvgs=0, intermed_services=0, subcontracting=0, lbt_tax_key=0):
     normal_lbt = int(get_normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting) *
                      lbt_tax_key)
     return normal_lbt if normal_lbt >= 0 else 0
