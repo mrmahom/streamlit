@@ -113,7 +113,7 @@ def has_lbt_tax_key(city_name):
 
 
 def get_reduced_tax(tax_base, city_name, lbt_tax_key):
-    if tax_base <= get_exemption_limit(city_name):
+    if 0 < tax_base <= get_exemption_limit(city_name):
         tax_base = 0
     if 0 < tax_base <= get_discount(city_name, discount_limit=True):
         lbt_tax = int(tax_base * lbt_tax_key)
