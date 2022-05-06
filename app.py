@@ -75,9 +75,9 @@ def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcont
     return lbt_options
 
 
-def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, lbt_tax_key, kata):
+def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, city_name, kata):
     lbt_opinions = get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data,
-                                   lbt_tax_key, kata)
+                                   city_name, kata)
 
     return list(lbt_opinions.keys())[list(lbt_opinions.values()).index(min(lbt_opinions.values()))]
 
