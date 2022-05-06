@@ -52,7 +52,7 @@ if lbt_city != 'Válassz!':
         if net_revenue and lbt_tax_key:
             main_data = app.main_data
             lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
-                                              main_data, lbt_tax_key, kata)
+                                              main_data, lbt_city, kata)
             recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services,
                                                      subcontracting, main_data, lbt_tax_key, kata)
 
