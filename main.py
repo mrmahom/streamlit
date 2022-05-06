@@ -14,7 +14,7 @@ st.title("Iparűzési adó kalkulátor")
 lbt_city = st.selectbox('Válaszd ki a székhelyed szerinti települést!', (sorted(city.tax_by_city)))
 lbt_tax_percentage = float(list(city.tax_by_city.values())[list(city.tax_by_city.keys()).index(lbt_city)])
 st.write(f'A településen érvényes adókulcs: {lbt_tax_percentage:,}%'.replace('.', ','))
-lbt_tax_key = app.get_lbt_tax_key(lbt_tax_percentage, current_year)
+lbt_tax_key = app.get_tax_key(lbt_tax_percentage, current_year)
 
 if lbt_city not in city.zero_tax:
     st.subheader("**Alap adatok**")
@@ -25,7 +25,7 @@ if lbt_city not in city.zero_tax:
         net_revenue = st.number_input("Add meg az éves bevételed!", min_value=0, step=100000)
 
     with colKata:
-        str_kata = st.selectbox('A kisadózó vállalkozások tételes adója alá tartozol?', ('Igen', 'Nem'))
+        str_kata = st.checkbox('A kisadózó vállalkozások tételes adója alá tartozol?', ('Igen', 'Nem'))
         kata = True if str_kata == 'Igen' else False
 
     st.markdown("---")

@@ -1,3 +1,4 @@
+from lbt import lbt_accounts as lbt
 
 main_data = {
     'excise_lbt_base': 2500000,
@@ -32,12 +33,12 @@ def get_considerable(net_revenue, pvgs):
                min(considerable_max[2], proportionate[2]), min(considerable_max[3], proportionate[3])])
 
 
-def normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting):
+def get_normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting):
     return net_revenue - material_cost - get_considerable(net_revenue, pvgs + intermed_services) - subcontracting
 
 
 def get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, lbt_tax_key):
-    normal_lbt = int(normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting) *
+    normal_lbt = int(get_normal_lbt_tax_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting) *
                      lbt_tax_key)
     return normal_lbt if normal_lbt >= 0 else 0
 
@@ -58,10 +59,13 @@ def get_simplified_lbt(data, net_revenue, lbt_tax_key):
 
 def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, lbt_tax_key, kata):
     lbt_options = {}
+
     if get_excise_lbt(data, lbt_tax_key, kata) != 'Null':
         lbt_options['excise'] = get_excise_lbt(data, lbt_tax_key, kata)
+
     if get_simplified_lbt(data, net_revenue, lbt_tax_key) != 'Null':
         lbt_options['simplified'] = get_simplified_lbt(data, net_revenue, lbt_tax_key)
+
     lbt_options['normal'] = get_normal_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
                                            lbt_tax_key)
     return lbt_options
@@ -74,10 +78,35 @@ def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, sub
     return list(lbt_opinions.keys())[list(lbt_opinions.values()).index(min(lbt_opinions.values()))]
 
 
-def get_lbt_tax_key(lbt_tax_percentage, current_year):
+def get_tax_key(lbt_tax_percentage, current_year):
     discount_year = [2021, 2022]
     if current_year in discount_year:
         if lbt_tax_percentage >= 1.0:
             return 0.01
     else:
         return lbt_tax_percentage / 100
+
+
+def has_discount(city_name):
+    lbt_data = lbt[city_name]
+    return True if lbt_data['discount'] else False
+
+
+def has_exemption_limit(city_name):
+    lbt_data = lbt[city_name]
+    return True if lbt_data['exemption_limit'] else False
+
+
+def get_lbt_tax_key(city_name):
+    lbt_data = lbt[city_name]
+    return lbt_data['rate']
+
+
+def has_lbt_tax_key(city_name):
+    lbt_data = lbt[city_name]
+    return True if lbt_data['rate'] else False
+
+
+"""
+
+"""
