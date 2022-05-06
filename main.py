@@ -54,7 +54,7 @@ if lbt_city != 'Válassz!':
             lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
                                               main_data, lbt_city, kata)
             recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services,
-                                                     subcontracting, main_data, lbt_tax_key, kata)
+                                                     subcontracting, main_data, lbt_city, kata)
 
             if len(lbt_options) > 1:
                 st.subheader("Lehetőségeid")
