@@ -105,3 +105,6 @@ if lbt_city != 'Válassz!':
 
     else:
         st.write("A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!")
+
+st.markdown("---")
+st.info("A kalkulátor jelenleg nem számol adókedvezménnyel, vagy -mentességgel.")
