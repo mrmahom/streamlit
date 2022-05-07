@@ -117,7 +117,7 @@ def get_reduced_tax(tax_base, city_name, lbt_tax_key):
         tax_base = 0
     if 0 < tax_base <= get_discount(city_name, discount_limit=True):
         lbt_tax = int(tax_base * lbt_tax_key)
-        percent = True if get_discount(city_name, discount_type=True) == 2 else False
+        percent = True if get_discount(city_name, discount_type=True) == 2 else False  # TODO %
         discount = get_discount(city_name, discount=True)
         return lbt_tax * (1 - discount) if percent else lbt_tax - discount
     else:
