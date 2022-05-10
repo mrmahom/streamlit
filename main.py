@@ -19,7 +19,7 @@ lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["V
 
 if lbt_city != 'Válassz!':
     lbt_rate = app.get_lbt_rate(lbt_city)
-    st.write(f"A településen érvényes adókulcs: {lbt_rate * 100:,}%".replace('.', ','))
+    st.write(f"A településen érvényes adókulcs: {lbt_rate:,}%".replace('.', ','))
 
     if app.has_lbt_rate(lbt_city):
         st.subheader("**Alap adatok**")
