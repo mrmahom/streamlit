@@ -7,11 +7,9 @@ main_data = {
 }
 
 
-def m(num):
-    return num * 1000000
-
-
 def get_considerable(net_revenue, pvgs=0):
+    def m(num):  # 1 million
+        return num * 1000000
     if pvgs <= m(500):
         considerable_max = [pvgs, 0, 0, 0]
         proportionate = [pvgs, 0, 0, 0]
