@@ -68,8 +68,10 @@ if lbt_city != 'Válassz!':
 
                 elif option == 'simplified':
                     simplified = f"{lbt_options[option]:,}".replace(',', '.')
-                    st.success(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft") if recommendation == \
-                        'simplified' else st.info(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft")
+                    if recommendation == 'simplified':
+                        st.success(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft")
+                    else:
+                        st.info(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft")
 
                 else:
                     normal = f"{lbt_options[option]:,}".replace(',', '.')
