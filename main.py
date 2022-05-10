@@ -2,24 +2,27 @@
 # @author: E. Martin Maho
 
 import streamlit as st
-from lbt import lbt_accounts
 import app
+from datetime import date
 
-current_year = 2022
+today = date.today()
+current_year = today.year
 net_revenue, material_cost, pvgs, intermed_services, subcontracting = 0, 0, 0, 0, 0
+
+# --------------------------------------
 
 st.set_page_config(page_title="Iparűzési adó kalkulátor", page_icon="🧊")
 
 st.title("Iparűzési adó kalkulátor")
 
-lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + list(lbt_accounts.keys())))
+lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + app.get_all_lbt_account()))
 
 if lbt_city != 'Válassz!':
-    lbt_tax_percentage = lbt_accounts[lbt_city]['rate']
-    st.write(f"A településen érvényes adókulcs: {lbt_tax_percentage:,}%".replace('.', ','))
-    lbt_tax_key = app.get_tax_key(lbt_tax_percentage, current_year)
+    lbt_rate = app.get_lbt_rate(lbt_city, current_year)
+    st.write(f"A településen érvényes adókulcs: {lbt_rate:,}%".replace('.', ','))
+    lbt_tax_key = app.get_tax_key(lbt_rate, current_year)
 
-    if app.has_lbt_tax_key(lbt_city):
+    if app.has_lbt_rate(lbt_city):
         st.subheader("**Alap adatok**")
 
         colRevenue, colKata = st.columns(2)
@@ -29,7 +32,7 @@ if lbt_city != 'Válassz!':
                                           format="%d".replace(",", "."))
 
         with colKata:
-            kata = st.checkbox("A kata adó hatája alá tartozol?")
+            kata = st.checkbox("A kata adó hatálya alá tartozol?")
             acc_costs = st.checkbox("Vannak elszámolható költségeid?")
 
         if acc_costs:
@@ -52,57 +55,30 @@ if lbt_city != 'Válassz!':
         if net_revenue and lbt_tax_key:
             main_data = app.main_data
             lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
-                                              main_data, lbt_city, kata)
+                                              main_data, lbt_city, kata, current_year)
             recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services,
-                                                     subcontracting, main_data, lbt_city, kata)
+                                                     subcontracting, main_data, lbt_city, kata, current_year)
 
-            if len(lbt_options) > 1:
-                st.subheader("Lehetőségeid")
+            st.subheader("Lehetőségeid")
+            for option in lbt_options:
 
-                for option in lbt_options:
+                if option == 'itemized':
+                    itemized = f"{lbt_options[option]:,}".replace(',', '.')
+                    st.success(f"Tételes iparűzési adó: {itemized} Ft") if recommendation == 'itemized' else \
+                        st.info(f"Tételes iparűzési adó: {itemized} Ft")
 
-                    if option == 'excise':
-                        excise = f"{lbt_options[option]:,}".replace(',', '.')
-                        st.write(f"Tételes iparűzési adó: {excise} Ft")
-
-                    elif option == 'simplified':
-                        simplified = f"{lbt_options[option]:,}".replace(',', '.')
-                        st.write(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft")
-
-                    else:
-                        normal = f"{lbt_options[option]:,}".replace(',', '.')
-                        st.write(f"Normál iparűzési adó: {normal} Ft")
-
-                st.subheader("Az általunk ajánlott iparűzési adótípus")
-
-                if recommendation == 'excise':
-                    st.success("Tételes iparűzési adó")
-
-                elif recommendation == 'simplified':
-                    st.success("Egyszerűsített adóalap-megállapítás")
+                elif option == 'simplified':
+                    simplified = f"{lbt_options[option]:,}".replace(',', '.')
+                    st.success(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft") if recommendation == \
+                        'simplified' else st.info(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft")
 
                 else:
-                    st.success("Normál iparűzési adó")
-
-            else:
-                st.subheader("Egyetlen \"választási\" lehetőséged")
-                only_one_option = lbt_options.keys()
-
-                for option in lbt_options:
-                    lbt_option_value = f"{lbt_options[option]:,}".replace(',', '.')
-
-                    if option == 'excise':
-                        st.write(f"Tételes iparűzési adó: {lbt_option_value} Ft")
-
-                    elif option == 'simplified':
-                        st.write(f"Egyszerűsített adóalap-megállapítás: {lbt_option_value} Ft")
-
-                    else:
-                        st.write(f"Normál iparűzési adó: {lbt_option_value} Ft")
+                    normal = f"{lbt_options[option]:,}".replace(',', '.')
+                    st.success(f"Normál iparűzési adó: {normal} Ft") if recommendation == 'normal' else \
+                        st.info(f"Normál iparűzési adó: {normal} Ft")
 
         else:
             st.warning("Túl kevés adatot adtál meg!")
-
     else:
         st.success("A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!")
 

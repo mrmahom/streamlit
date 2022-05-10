@@ -1,7 +1,7 @@
 from lbt import lbt_accounts as lbt
 
 main_data = {
-    'excise_lbt_base': 2500000,
+    'itemized_lbt_base': 2500000,
     'simplified_cost_share': .2,
     'simplified_max_revenue': 8000000
 }
@@ -44,12 +44,12 @@ def get_normal_lbt(net_revenue, city_name, material_cost=0, pvgs=0, intermed_ser
     return normal_lbt if normal_lbt >= 0 else 0
 
 
-def get_excise_lbt(data, lbt_tax_key, kata, city_name):
+def get_itemized_lbt(data, lbt_tax_key, kata, city_name):
     if kata:
-        tax_base = float(data['excise_lbt_base'])
+        tax_base = float(data['itemized_lbt_base'])
         return get_reduced_tax(tax_base, city_name, lbt_tax_key)
     else:
-        return 'Null'
+        return None
 
 
 def get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name):
@@ -57,17 +57,17 @@ def get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name):
         tax_base = net_revenue * (1 - data['simplified_cost_share'])
         return get_reduced_tax(tax_base, city_name, lbt_tax_key)
     else:
-        return 'Null'
+        return None
 
 
-def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, city_name, kata):
+def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, city_name, kata, year):
     lbt_options = {}
-    lbt_tax_key = get_lbt_tax_key(city_name)
+    lbt_tax_key = get_lbt_rate(city_name, year)
 
-    if get_excise_lbt(data, lbt_tax_key, kata, city_name) != 'Null':
-        lbt_options['excise'] = get_excise_lbt(data, lbt_tax_key, kata, city_name)
+    if get_itemized_lbt(data, lbt_tax_key, kata, city_name) is not None:
+        lbt_options['itemized'] = get_itemized_lbt(data, lbt_tax_key, kata, city_name)
 
-    if get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name) != 'Null':
+    if get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name) is not None:
         lbt_options['simplified'] = get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name)
 
     lbt_options['normal'] = get_normal_lbt(net_revenue, city_name, material_cost, pvgs, intermed_services,
@@ -75,9 +75,10 @@ def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcont
     return lbt_options
 
 
-def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, city_name, kata):
+def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, city_name,
+                        kata, year):
     lbt_opinions = get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data,
-                                   city_name, kata)
+                                   city_name, kata, year)
 
     return list(lbt_opinions.keys())[list(lbt_opinions.values()).index(min(lbt_opinions.values()))]
 
@@ -102,12 +103,12 @@ def get_exemption_limit(city_name):
     return lbt_data['exemption_limit']
 
 
-def get_lbt_tax_key(city_name):
+def get_lbt_rate(city_name, year):
     lbt_data = lbt[city_name]
-    return get_tax_key(lbt_data['rate'], 2022)
+    return get_tax_key(lbt_data['rate'], year)
 
 
-def has_lbt_tax_key(city_name):
+def has_lbt_rate(city_name):
     lbt_data = lbt[city_name]
     return True if lbt_data['rate'] else False
 
@@ -117,8 +118,12 @@ def get_reduced_tax(tax_base, city_name, lbt_tax_key):
         tax_base = 0
     if 0 < tax_base <= get_discount(city_name, discount_limit=True):
         lbt_tax = int(tax_base * lbt_tax_key)
-        percent = True if get_discount(city_name, discount_type=True) == 2 else False  # TODO %
+        percent = True if get_discount(city_name, discount_type=True) == 2 else False
         discount = get_discount(city_name, discount=True)
-        return lbt_tax * (1 - discount) if percent else lbt_tax - discount
+        return lbt_tax * (1 - discount / 100) if percent else lbt_tax - discount
     else:
         return int(tax_base * lbt_tax_key)
+
+
+def get_all_lbt_account():
+    return list(lbt.keys())
