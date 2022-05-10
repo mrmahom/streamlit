@@ -1,6 +1,3 @@
-# encoding: utf-8
-# @author: E. Martin Maho
-
 import streamlit as st
 import app
 from datetime import date
@@ -88,4 +85,4 @@ if lbt_city != 'Válassz!':
         st.success("A megadott településen nincs iparűzési adófizetésre vonatkozó kötelezettség!")
 
 st.markdown("---")
-st.info("A kalkulátor kata adóalanyok esetében már \"pontosan\" számol adókedvezménnyel, és -mentességgel.")
+st.write("@author: E. Martin Maho")

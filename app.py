@@ -38,24 +38,24 @@ def get_normal_lbt_base(net_revenue, material_cost=0, pvgs=0, intermed_services=
 
 
 def get_normal_lbt(net_revenue, city_name, material_cost=0, pvgs=0, intermed_services=0, subcontracting=0,
-                   lbt_tax_key=0):
+                   tax_rate=0):
     tax_base = get_normal_lbt_base(net_revenue, material_cost, pvgs, intermed_services, subcontracting)
-    normal_lbt = get_reduced_tax(tax_base, city_name, lbt_tax_key)
+    normal_lbt = get_reduced_tax(tax_base, city_name, tax_rate)
     return normal_lbt if normal_lbt >= 0 else 0
 
 
-def get_itemized_lbt(data, lbt_tax_key, kata, city_name):
+def get_itemized_lbt(data, tax_rate, kata, city_name):
     if kata:
         tax_base = float(data['itemized_lbt_base'])
-        return get_reduced_tax(tax_base, city_name, lbt_tax_key)
+        return get_reduced_tax(tax_base, city_name, tax_rate)
     else:
         return None
 
 
-def get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name):
+def get_simplified_lbt(data, net_revenue, tax_rate, city_name):
     if 0 < net_revenue <= data['simplified_max_revenue']:
         tax_base = net_revenue * (1 - data['simplified_cost_share'])
-        return get_reduced_tax(tax_base, city_name, lbt_tax_key)
+        return get_reduced_tax(tax_base, city_name, tax_rate)
     else:
         return None
 
