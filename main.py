@@ -63,7 +63,9 @@ if lbt_city != 'Válassz!':
 
                 if option == 'itemized':
                     itemized = f"{lbt_options[option]:,}".replace(',', '.')
-                    st.success(f"Tételes iparűzési adó: {itemized} Ft") if recommendation == 'itemized' else \
+                    if recommendation == 'itemized':
+                        st.success(f"Tételes iparűzési adó: {itemized} Ft")
+                    else:
                         st.info(f"Tételes iparűzési adó: {itemized} Ft")
 
                 elif option == 'simplified':
@@ -75,7 +77,9 @@ if lbt_city != 'Válassz!':
 
                 else:
                     normal = f"{lbt_options[option]:,}".replace(',', '.')
-                    st.success(f"Normál iparűzési adó: {normal} Ft") if recommendation == 'normal' else \
+                    if recommendation == 'normal':
+                        st.success(f"Normál iparűzési adó: {normal} Ft")
+                    else:
                         st.info(f"Normál iparűzési adó: {normal} Ft")
 
         else:
