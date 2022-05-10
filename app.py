@@ -62,16 +62,16 @@ def get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name):
 
 def get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting, data, city_name, kata, year):
     lbt_options = {}
-    lbt_tax_key = get_lbt_rate(city_name, year)
+    tax_rate = get_tax_rate(get_lbt_rate(city_name), year)
 
-    if get_itemized_lbt(data, lbt_tax_key, kata, city_name) is not None:
-        lbt_options['itemized'] = get_itemized_lbt(data, lbt_tax_key, kata, city_name)
+    if get_itemized_lbt(data, tax_rate, kata, city_name) is not None:
+        lbt_options['itemized'] = get_itemized_lbt(data, tax_rate, kata, city_name)
 
-    if get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name) is not None:
-        lbt_options['simplified'] = get_simplified_lbt(data, net_revenue, lbt_tax_key, city_name)
+    if get_simplified_lbt(data, net_revenue, tax_rate, city_name) is not None:
+        lbt_options['simplified'] = get_simplified_lbt(data, net_revenue, tax_rate, city_name)
 
     lbt_options['normal'] = get_normal_lbt(net_revenue, city_name, material_cost, pvgs, intermed_services,
-                                           subcontracting, lbt_tax_key)
+                                           subcontracting, tax_rate)
     return lbt_options
 
 
@@ -83,13 +83,13 @@ def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, sub
     return list(lbt_opinions.keys())[list(lbt_opinions.values()).index(min(lbt_opinions.values()))]
 
 
-def get_tax_rate(lbt_tax_percentage, current_year):
+def get_tax_rate(lbt_percentage, current_year):
     discount_year = [2021, 2022]
     if current_year in discount_year:
-        if lbt_tax_percentage >= 1.0:
+        if lbt_percentage >= 1.0:
             return 0.01
     else:
-        return lbt_tax_percentage / 100
+        return lbt_percentage / 100
 
 
 def get_discount(city_name, discount_limit=False, discount=False, discount_type=False):
@@ -103,9 +103,8 @@ def get_exemption_limit(city_name):
     return lbt_data['exemption_limit']
 
 
-def get_lbt_rate(city_name, year):
-    lbt_data = lbt[city_name]
-    return get_tax_rate(lbt_data['rate'], year)
+def get_lbt_rate(city_name):
+    return lbt[city_name]['rate']
 
 
 def has_lbt_rate(city_name):
