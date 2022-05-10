@@ -19,8 +19,7 @@ lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["V
 
 if lbt_city != 'Válassz!':
     lbt_rate = app.get_lbt_rate(lbt_city, current_year)
-    st.write(f"A településen érvényes adókulcs: {lbt_rate:,}%".replace('.', ','))
-    lbt_tax_key = app.get_tax_key(lbt_rate, current_year)
+    st.write(f"A településen érvényes adókulcs: {lbt_rate * 100:,}%".replace('.', ','))
 
     if app.has_lbt_rate(lbt_city):
         st.subheader("**Alap adatok**")
@@ -52,7 +51,7 @@ if lbt_city != 'Válassz!':
 
         st.markdown("---")
 
-        if net_revenue and lbt_tax_key:
+        if net_revenue and lbt_rate:
             main_data = app.main_data
             lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
                                               main_data, lbt_city, kata, current_year)

@@ -83,7 +83,7 @@ def get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services, sub
     return list(lbt_opinions.keys())[list(lbt_opinions.values()).index(min(lbt_opinions.values()))]
 
 
-def get_tax_key(lbt_tax_percentage, current_year):
+def get_tax_rate(lbt_tax_percentage, current_year):
     discount_year = [2021, 2022]
     if current_year in discount_year:
         if lbt_tax_percentage >= 1.0:
@@ -105,7 +105,7 @@ def get_exemption_limit(city_name):
 
 def get_lbt_rate(city_name, year):
     lbt_data = lbt[city_name]
-    return get_tax_key(lbt_data['rate'], year)
+    return get_tax_rate(lbt_data['rate'], year)
 
 
 def has_lbt_rate(city_name):
