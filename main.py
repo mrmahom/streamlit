@@ -2,17 +2,27 @@ import streamlit as st
 import app
 from datetime import date
 
+import render
+
 today = date.today()
 current_year = today.year
-net_revenue, material_cost, pvgs, intermed_services, subcontracting = 0, 0, 0, 0, 0
+
+net_revenue = 0
+material_cost = 0
+pvgs = 0
+intermed_services = 0
+subcontracting = 0
 
 # --------------------------------------
 
-st.set_page_config(page_title="Iparűzési adó kalkulátor", page_icon="🧊")
+st.set_page_config(page_title="Iparűzési adó kalkulátor")
 
 st.title("Iparűzési adó kalkulátor")
 
-lbt_city = st.selectbox("Válaszd ki a székhelyed szerinti települést!", (["Válassz!"] + app.get_all_lbt_account()))
+lbt_city = st.selectbox(
+    "Válaszd ki a székhelyed szerinti települést!",
+    (["Válassz!"] + app.get_all_lbt_account())
+)
 
 if lbt_city != 'Válassz!':
     lbt_rate = app.get_lbt_rate(lbt_city)
@@ -21,26 +31,30 @@ if lbt_city != 'Válassz!':
     if app.has_lbt_rate(lbt_city):
         st.subheader("**Alap adatok**")
 
-        colRevenue, colKata = st.columns(2)
+        col_revenue, col_kata = st.columns(2)
 
-        with colRevenue:
-            net_revenue = st.number_input("Add meg az éves bevételed!", min_value=100000, step=100000,
-                                          format="%d".replace(",", "."))
+        with col_revenue:
+            net_revenue = st.number_input(
+                "Add meg az éves bevételed!",
+                min_value=100000,
+                step=100000,
+                format="%d".replace(",", ".")
+            )
 
-        with colKata:
+        with col_kata:
             kata = st.checkbox("A kata adó hatálya alá tartozol?")
             acc_costs = st.checkbox("Vannak elszámolható költségeid?")
 
         if acc_costs:
             st.markdown("---")
             st.subheader("**Elszámolható költségek**")
-            colExpenses1, colExpenses2 = st.columns(2)
+            col_expenses1, col_expenses2 = st.columns(2)
 
-            with colExpenses1:
+            with col_expenses1:
                 material_cost = st.number_input("Add meg az anyagköltséged értékét!", min_value=0, step=100000)
                 pvgs = st.number_input("Add meg az eladott áruid beszerzési értékét!", min_value=0, step=100000)
 
-            with colExpenses2:
+            with col_expenses2:
                 intermed_services = st.number_input("Add meg a közvetített szolgáltatások értékét!",
                                                     min_value=0, step=100000)
                 subcontracting = st.number_input("Add meg az alvállalkozóid teljesítések értékét!", min_value=0,
@@ -49,35 +63,20 @@ if lbt_city != 'Válassz!':
         st.markdown("---")
 
         if net_revenue and lbt_rate:
-            main_data = app.main_data
-            lbt_options = app.get_lbt_options(net_revenue, material_cost, pvgs, intermed_services, subcontracting,
-                                              main_data, lbt_city, kata, current_year)
-            recommendation = app.get_recommended_lbt(net_revenue, material_cost, pvgs, intermed_services,
-                                                     subcontracting, main_data, lbt_city, kata, current_year)
+            lbt_options = app.get_lbt_options(
+                net_revenue,
+                material_cost,
+                pvgs,
+                intermed_services,
+                subcontracting,
+                lbt_city,
+                kata,
+            )
+
+            recommendation = app.get_recommended_lbt(lbt_options)
 
             st.subheader("Lehetőségeid")
-            for option in lbt_options:
-
-                if option == 'itemized':
-                    itemized = f"{lbt_options[option]:,}".replace(',', '.')
-                    if recommendation == 'itemized':
-                        st.success(f"Tételes iparűzési adó: {itemized} Ft")
-                    else:
-                        st.info(f"Tételes iparűzési adó: {itemized} Ft")
-
-                elif option == 'simplified':
-                    simplified = f"{lbt_options[option]:,}".replace(',', '.')
-                    if recommendation == 'simplified':
-                        st.success(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft")
-                    else:
-                        st.info(f"Egyszerűsített adóalap-megállapítás: {simplified} Ft")
-
-                else:
-                    normal = f"{lbt_options[option]:,}".replace(',', '.')
-                    if recommendation == 'normal':
-                        st.success(f"Normál iparűzési adó: {normal} Ft")
-                    else:
-                        st.info(f"Normál iparűzési adó: {normal} Ft")
+            render.options(lbt_options, recommendation)
 
         else:
             st.warning("Túl kevés adatot adtál meg!")
