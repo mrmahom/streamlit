@@ -1,11 +1,7 @@
 import streamlit as st
 import app
-from datetime import date
-
 import render
 
-today = date.today()
-current_year = today.year
 
 net_revenue = 0
 material_cost = 0
@@ -34,12 +30,7 @@ if lbt_city != 'Válassz!':
         col_revenue, col_kata = st.columns(2)
 
         with col_revenue:
-            net_revenue = st.number_input(
-                "Add meg az éves bevételed!",
-                min_value=100000,
-                step=100000,
-                format="%d".replace(",", ".")
-            )
+            net_revenue = st.number_input("Add meg az éves bevételed!", min_value=100000, step=100000)
 
         with col_kata:
             kata = st.checkbox("A kata adó hatálya alá tartozol?")
@@ -55,10 +46,16 @@ if lbt_city != 'Válassz!':
                 pvgs = st.number_input("Add meg az eladott áruid beszerzési értékét!", min_value=0, step=100000)
 
             with col_expenses2:
-                intermed_services = st.number_input("Add meg a közvetített szolgáltatások értékét!",
-                                                    min_value=0, step=100000)
-                subcontracting = st.number_input("Add meg az alvállalkozóid teljesítések értékét!", min_value=0,
-                                                 step=100000)
+                intermed_services = st.number_input(
+                    "Add meg a közvetített szolgáltatások értékét!",
+                    min_value=0,
+                    step=100000
+                )
+                subcontracting = st.number_input(
+                    "Add meg az alvállalkozóid teljesítések értékét!",
+                    min_value=0,
+                    step=100000
+                )
 
         st.markdown("---")
 
@@ -72,7 +69,6 @@ if lbt_city != 'Válassz!':
                 lbt_city,
                 kata,
             )
-
             recommendation = app.get_recommended_lbt(lbt_options)
 
             st.subheader("Lehetőségeid")
