@@ -33,7 +33,7 @@ def _calc_considerable(net_revenue, pvgs=0):
     def m(num):  # 1 million
         return num * 1000000
 
-    if pvgs <= m(500):
+    if net_revenue <= m(500):
         considerable_max = [
             net_revenue,
             0,
@@ -47,7 +47,7 @@ def _calc_considerable(net_revenue, pvgs=0):
             0
         ]
 
-    elif m(500) < pvgs <= m(20000):
+    elif m(500) < net_revenue <= m(20000):
         considerable_max = [
             m(500),
             (net_revenue - m(500)) * 0.85,
@@ -61,7 +61,7 @@ def _calc_considerable(net_revenue, pvgs=0):
             0
         ]
 
-    elif m(20000) < pvgs <= m(80000):
+    elif m(20000) < net_revenue <= m(80000):
         considerable_max = [
             m(500),
             m(19500) * .85,
