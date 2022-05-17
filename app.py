@@ -34,19 +34,54 @@ def _calc_considerable(net_revenue, pvgs=0):
         return num * 1000000
 
     if pvgs <= m(500):
-        considerable_max = [net_revenue, 0, 0, 0]
-        proportionate = [pvgs, 0, 0, 0]
+        considerable_max = [
+            net_revenue,
+            0,
+            0,
+            0
+        ]
+        proportionate = [
+            pvgs,
+            0,
+            0,
+            0
+        ]
 
     elif m(500) < pvgs <= m(20000):
-        considerable_max = [m(500), (net_revenue - m(500)) * 0.85, 0, 0]
-        proportionate = [m(500) / net_revenue * pvgs, m(19500) / net_revenue * pvgs, 0, 0]
+        considerable_max = [
+            m(500),
+            (net_revenue - m(500)) * 0.85,
+            0,
+            0
+        ]
+        proportionate = [
+            m(500) / net_revenue * pvgs,
+            (net_revenue - m(500)) / net_revenue * pvgs,
+            0,
+            0
+        ]
 
     elif m(20000) < pvgs <= m(80000):
-        considerable_max = [m(500), m(19500) * .85, (net_revenue - m(20000)) * .75, 0]
-        proportionate = [m(500) / net_revenue * pvgs, m(19500) / net_revenue * pvgs, m(60000) / net_revenue * pvgs, 0]
+        considerable_max = [
+            m(500),
+            m(19500) * .85,
+            (net_revenue - m(20000)) * .75,
+            0
+        ]
+        proportionate = [
+            m(500) / net_revenue * pvgs,
+            m(19500) / net_revenue * pvgs,
+            (net_revenue - m(20000)) / net_revenue * pvgs,
+            0
+        ]
 
     else:
-        considerable_max = [m(500), m(19500) * .85, m(60000) * .75, (net_revenue - m(80000)) * .70]
+        considerable_max = [
+            m(500),
+            m(19500) * .85,
+            m(60000) * .75,
+            (net_revenue - m(80000)) * .70
+        ]
         proportionate = [
             m(500) / net_revenue * pvgs,
             m(19500) / net_revenue * pvgs,
